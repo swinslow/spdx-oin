@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 func printStats(components []*LSTComponent) {
@@ -19,6 +18,13 @@ func printStats(components []*LSTComponent) {
 	countInvalidaPackageVersionDownloadLink := 0
 	countNoDescription := 0
 
+	// prefixes to test against URLs
+	prefixes := []string{
+		"http",
+		"ftp",
+		"www",
+	}
+
 	for _, component := range components {
 		countTotalPackages++
 
@@ -28,24 +34,23 @@ func printStats(components []*LSTComponent) {
 
 		if component.Version == "" {
 			countNoVersion++
-			fmt.Printf("===> %s: %s\n", component.PackageName, component.Version)
 		}
 
 		if component.ProjectDownloadURL == "" {
 			countNoProjectDownloadURL++
-		} else if !strings.HasPrefix(component.ProjectDownloadURL, "http") {
+		} else if !hasAnyPrefix(component.ProjectDownloadURL, prefixes) {
 			countInvalidaProjectDownloadURL++
 		}
 
 		if component.ProjectURL == "" {
 			countNoProjectURL++
-		} else if !strings.HasPrefix(component.ProjectURL, "http") {
+		} else if !hasAnyPrefix(component.ProjectURL, prefixes) {
 			countInvalidaProjectURL++
 		}
 
 		if component.PackageVersionDownloadLink == "" {
 			countNoPackageVersionDownloadLink++
-		} else if !strings.HasPrefix(component.PackageVersionDownloadLink, "http") {
+		} else if !hasAnyPrefix(component.PackageVersionDownloadLink, prefixes) {
 			countInvalidaPackageVersionDownloadLink++
 		}
 
