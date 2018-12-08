@@ -12,7 +12,7 @@ import (
 
 // LSTComponent represents a single component on the Linux System Table.
 type LSTComponent struct {
-	TableNumber                int
+	TableNumber                string
 	SerialNumber               int
 	PackageName                string
 	Version                    string
@@ -44,7 +44,7 @@ func main() {
 		return
 	}
 
-	components, err := parseRawHTML(s, 4)
+	components, err := parseRawHTML(s, "4")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -52,7 +52,7 @@ func main() {
 
 	printStats(components)
 
-	doc, err := createDocument(components, 4)
+	doc, err := createDocument(components, "4")
 	if err != nil {
 		fmt.Println(err)
 		return

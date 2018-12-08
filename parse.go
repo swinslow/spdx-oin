@@ -33,14 +33,14 @@ func parseRow(trElt soup.Root) (*LSTComponent, error) {
 	return &component, nil
 }
 
-func parseRawHTML(raw string, tableNumber int) ([]*LSTComponent, error) {
+func parseRawHTML(raw string, tableNumber string) ([]*LSTComponent, error) {
 	// build the parsed soup
 	doc := soup.HTMLParse(raw)
 
 	// get pointers to all <tr> elements
 	trElts := doc.FindAll("tr")
 	if len(trElts) < 1 {
-		return nil, fmt.Errorf("Error while parsing HTML for table %d, no table rows found", tableNumber)
+		return nil, fmt.Errorf("Error while parsing HTML for table %s, no table rows found", tableNumber)
 	}
 
 	// the first <tr> should be the header row
@@ -48,7 +48,7 @@ func parseRawHTML(raw string, tableNumber int) ([]*LSTComponent, error) {
 	trHeader := trElts[0]
 	tdHeader := trHeader.Find("td")
 	if tdHeader.Text() != "S.no" {
-		return nil, fmt.Errorf("Error while parsing HTML for table %d, expected header row text to be 'S.no', got %s", tableNumber, tdHeader.Text())
+		return nil, fmt.Errorf("Error while parsing HTML for table %s, expected header row text to be 'S.no', got %s", tableNumber, tdHeader.Text())
 	}
 
 	// We're good, so start parsing remainder and build components list

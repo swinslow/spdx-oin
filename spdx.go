@@ -82,7 +82,7 @@ func createPackage(component *LSTComponent) (*spdx.Package2_1, error) {
 	return &pkg, nil
 }
 
-func createDocument(components []*LSTComponent, tableNumber int) (*spdx.Document2_1, error) {
+func createDocument(components []*LSTComponent, tableNumber string) (*spdx.Document2_1, error) {
 	// build main document
 	doc := spdx.Document2_1{}
 
@@ -91,11 +91,11 @@ func createDocument(components []*LSTComponent, tableNumber int) (*spdx.Document
 		SPDXVersion:       "SPDX-2.1",
 		DataLicense:       "CC0-1.0",
 		SPDXIdentifier:    "SPDXRef-DOCUMENT",
-		DocumentName:      fmt.Sprintf("Linux System Table %d", tableNumber),
-		DocumentNamespace: fmt.Sprintf("https://github.com/swinslow/spdx-oin/spdxdocs/table-%d.spdx", tableNumber),
+		DocumentName:      fmt.Sprintf("Linux System Table %s", tableNumber),
+		DocumentNamespace: fmt.Sprintf("https://github.com/swinslow/spdx-oin/spdxdocs/table-%s.spdx", tableNumber),
 		CreatorTools:      []string{"github.com/swinslow/spdx-oin-0.0.1"},
 		Created:           time.Now().Format("2006-01-02T15:04:05Z"),
-		DocumentComment:   fmt.Sprintf("Automatically generated from parsing HTML for Linux System Table %d from Open Invention Network website.\nNo attempt has been made to analyze the files, licenses or copyright statements for these packages.", tableNumber),
+		DocumentComment:   fmt.Sprintf("Automatically generated from parsing HTML for Linux System Table %s from Open Invention Network website.\nNo attempt has been made to analyze the files, licenses or copyright statements for these packages.", tableNumber),
 	}
 
 	// create and add packages from components
