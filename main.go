@@ -38,42 +38,54 @@ func loadRawHTML(filename string) (string, error) {
 }
 
 func main() {
-	s, err := loadRawHTML(`/Users/steve/go/src/github.com/swinslow/spdx-oin/scratch/table-4.html`)
-	if err != nil {
-		fmt.Println(err)
-		return
+	tables := map[string]string{
+		"1-2": "scratch/table-1-2.html",
+		"3":   "scratch/table-3.html",
+		"4":   "scratch/table-4.html",
+		"5":   "scratch/table-5.html",
+		"6":   "scratch/table-6.html",
+		"7":   "scratch/table-7.html",
+		"8":   "scratch/table-8.html",
+		"9":   "scratch/table-9.html",
 	}
 
-	components, err := parseRawHTML(s, "4")
-	if err != nil {
-		fmt.Println(err)
-		return
+	for tableNum, htmlPath := range tables {
+		s, err := loadRawHTML(htmlPath)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		components, err := parseRawHTML(s, tableNum)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		doc, err := createDocument(components, tableNum)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		// create a new file for writing
+		fileOut := fmt.Sprintf("spdxdocs/table-%s.spdx", tableNum)
+		w, err := os.Create(fileOut)
+		if err != nil {
+			fmt.Printf("Error while opening %v for writing: %v", fileOut, err)
+			return
+		}
+		defer w.Close()
+
+		// try to save the document to disk as a tag-value file
+		err = tvsaver.Save2_1(doc, w)
+		if err != nil {
+			fmt.Printf("Error while saving %v: %v", fileOut, err)
+			return
+		}
+
+		// it worked
+		fmt.Printf("Successfully saved %s\n", fileOut)
 	}
 
-	printStats(components)
-
-	doc, err := createDocument(components, "4")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// create a new file for writing
-	fileOut := "scratch/table-4.spdx"
-	w, err := os.Create(fileOut)
-	if err != nil {
-		fmt.Printf("Error while opening %v for writing: %v", fileOut, err)
-		return
-	}
-	defer w.Close()
-
-	// try to save the document to disk as a tag-value file
-	err = tvsaver.Save2_1(doc, w)
-	if err != nil {
-		fmt.Printf("Error while saving %v: %v", fileOut, err)
-		return
-	}
-
-	// it worked
-	fmt.Printf("Successfully saved %s\n", fileOut)
 }
