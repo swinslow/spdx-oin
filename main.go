@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/swinslow/spdx-go/v0/tvsaver"
 )
 
 // LSTComponent represents a single component on the Linux System Table.
@@ -49,4 +51,29 @@ func main() {
 	}
 
 	printStats(components)
+
+	doc, err := createDocument(components, 4)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// create a new file for writing
+	fileOut := "scratch/table-4.spdx"
+	w, err := os.Create(fileOut)
+	if err != nil {
+		fmt.Printf("Error while opening %v for writing: %v", fileOut, err)
+		return
+	}
+	defer w.Close()
+
+	// try to save the document to disk as a tag-value file
+	err = tvsaver.Save2_1(doc, w)
+	if err != nil {
+		fmt.Printf("Error while saving %v: %v", fileOut, err)
+		return
+	}
+
+	// it worked
+	fmt.Printf("Successfully saved %s\n", fileOut)
 }
