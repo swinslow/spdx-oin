@@ -7,15 +7,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/swinslow/spdx-go/v0/spdx"
+	"github.com/spdx/tools-golang/spdx"
 )
 
-func createPackage(component *LSTComponent) (*spdx.Package2_1, error) {
+func createPackage(component *LSTComponent) (*spdx.Package2_2, error) {
 	// fill in initial mandatory values
 	// for now we'll leave empty any mandatory values that require more processing
-	pkg := spdx.Package2_1{
+	pkg := spdx.Package2_2{
 		PackageName:           component.PackageName,
-		PackageSPDXIdentifier: fmt.Sprintf("SPDXRef-%d", component.SerialNumber),
+		PackageSPDXIdentifier: spdx.ElementID(fmt.Sprintf("%d", component.SerialNumber)),
 		// fill in PackageDownloadLocation below
 		FilesAnalyzed:             false,
 		IsFilesAnalyzedTagPresent: true,
@@ -82,30 +82,30 @@ func createPackage(component *LSTComponent) (*spdx.Package2_1, error) {
 	return &pkg, nil
 }
 
-func createDocument(components []*LSTComponent, tableNumber string) (*spdx.Document2_1, error) {
+func createDocument(components []*LSTComponent, tableNumber string) (*spdx.Document2_2, error) {
 	// build main document
-	doc := spdx.Document2_1{}
+	doc := spdx.Document2_2{}
 
 	// build creation info section
-	doc.CreationInfo = &spdx.CreationInfo2_1{
-		SPDXVersion:       "SPDX-2.1",
+	doc.CreationInfo = &spdx.CreationInfo2_2{
+		SPDXVersion:       "SPDX-2.2",
 		DataLicense:       "CC0-1.0",
-		SPDXIdentifier:    "SPDXRef-DOCUMENT",
+		SPDXIdentifier:    spdx.ElementID("DOCUMENT"),
 		DocumentName:      fmt.Sprintf("Linux System Table %s", tableNumber),
 		DocumentNamespace: fmt.Sprintf("https://github.com/swinslow/spdx-oin/spdxdocs/table-%s.spdx", tableNumber),
-		CreatorTools:      []string{"github.com/swinslow/spdx-oin-0.0.1"},
+		CreatorTools:      []string{"github.com/swinslow/spdx-oin-0.0.2"},
 		Created:           time.Now().Format("2006-01-02T15:04:05Z"),
 		DocumentComment:   fmt.Sprintf("Automatically generated from parsing HTML for Linux System Table %s from Open Invention Network website.\nNo attempt has been made to analyze the files, licenses or copyright statements for these packages.", tableNumber),
 	}
 
 	// create and add packages from components
-	doc.Packages = []*spdx.Package2_1{}
+	doc.Packages = map[spdx.ElementID]*spdx.Package2_2{}
 	for _, component := range components {
 		pkg, err := createPackage(component)
 		if err != nil {
 			return nil, err
 		}
-		doc.Packages = append(doc.Packages, pkg)
+		doc.Packages[pkg.PackageSPDXIdentifier] = pkg
 	}
 
 	return &doc, nil

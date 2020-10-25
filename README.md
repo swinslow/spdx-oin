@@ -28,7 +28,7 @@ you can find them in the `/spdxdocs/` folder.
 If you're looking to use the code that created them, it uses the following dependencies:
 
 * [`github.com/anaskhan96/soup`](https://github.com/anaskhan96/soup): to parse the Tables' HTML files
-* [`github.com/swinslow/spdx-go`](https://github.com/swinslow/spdx-go): to generate and save the SPDX output
+* [`github.com/spdx/tools-golang`](https://github.com/spdx/tools-golang): to generate and save the SPDX output
 
 ## License
 

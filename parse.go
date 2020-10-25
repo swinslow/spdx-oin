@@ -25,10 +25,31 @@ func parseRow(trElt soup.Root) (*LSTComponent, error) {
 
 	component.PackageName = tdElts[1].Text()
 	component.Version = tdElts[2].Text()
-	component.ProjectDownloadURL = tdElts[3].Find("a").Text()
-	component.ProjectURL = tdElts[4].Find("a").Text()
-	component.PackageVersionDownloadLink = tdElts[5].Find("a").Text()
-	component.Description = tdElts[6].Text()
+
+	downloadURLA := tdElts[3].Find("a")
+	if downloadURLA.Error == nil {
+		component.ProjectDownloadURL = downloadURLA.Text()
+	} else {
+		component.ProjectDownloadURL = "NOASSERTION"
+	}
+
+	projectURLA := tdElts[4].Find("a")
+	if projectURLA.Error == nil {
+		component.ProjectURL = projectURLA.Text()
+	} else {
+		component.ProjectURL = "NOASSERTION"
+	}
+
+	versionDownloadURLA := tdElts[5].Find("a")
+	if versionDownloadURLA.Error == nil {
+		component.PackageVersionDownloadLink = versionDownloadURLA.Text()
+	} else {
+		component.PackageVersionDownloadLink = "NOASSERTION"
+	}
+
+	if len(tdElts) >= 7 {
+		component.Description = tdElts[6].Text()
+	}
 
 	return &component, nil
 }
@@ -46,9 +67,9 @@ func parseRawHTML(raw string, tableNumber string) ([]*LSTComponent, error) {
 	// the first <tr> should be the header row
 	// let's make sure it really is -- check the text of the first column
 	trHeader := trElts[0]
-	tdHeader := trHeader.Find("td")
-	if tdHeader.Text() != "S.no" {
-		return nil, fmt.Errorf("Error while parsing HTML for table %s, expected header row text to be 'S.no', got %s", tableNumber, tdHeader.Text())
+	thHeader := trHeader.Find("th")
+	if thHeader.Text() != "S.no" {
+		return nil, fmt.Errorf("Error while parsing HTML for table %s, expected header row text to be 'S.no', got %s", tableNumber, thHeader.Text())
 	}
 
 	// We're good, so start parsing remainder and build components list
