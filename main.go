@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/swinslow/spdx-go/v0/tvsaver"
+	"github.com/spdx/tools-golang/tvsaver"
 )
 
 // LSTComponent represents a single component on the Linux System Table.
@@ -47,6 +47,7 @@ func main() {
 		"7":   "scratch/table-7.html",
 		"8":   "scratch/table-8.html",
 		"9":   "scratch/table-9.html",
+		"10":  "scratch/table-10.html",
 	}
 
 	for tableNum, htmlPath := range tables {
@@ -78,7 +79,7 @@ func main() {
 		defer w.Close()
 
 		// try to save the document to disk as a tag-value file
-		err = tvsaver.Save2_1(doc, w)
+		err = tvsaver.Save2_2(doc, w)
 		if err != nil {
 			fmt.Printf("Error while saving %v: %v", fileOut, err)
 			return
